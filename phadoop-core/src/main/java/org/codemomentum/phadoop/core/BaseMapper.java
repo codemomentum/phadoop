@@ -34,10 +34,10 @@ public abstract class BaseMapper extends Mapper<WritableComparable, Writable,
         scriptEngineManager = new ScriptEngineManager();
         //get utils String and extension
         //instantiate the utils engine manager
-        scriptEngine = scriptEngineManager.getEngineByExtension(context.getConfiguration().get(MAPPER_EXTENSION));
+        scriptEngine = scriptEngineManager.getEngineByExtension(context.getConfiguration().get(REDUCER_EXTENSION));
         //eval
         try {
-            scriptEngine.eval(context.getConfiguration().get(MAPPER_SCRIPT));
+            scriptEngine.eval(context.getConfiguration().get(REDUCER_SCRIPT));
             scriptEngine.put("_key",getKey());
             scriptEngine.put("_value",getValue());
         } catch (ScriptException e) {
@@ -55,7 +55,7 @@ public abstract class BaseMapper extends Mapper<WritableComparable, Writable,
     //release any resources if possible
     @Override
     protected void cleanup(Context context) throws IOException, InterruptedException {
-        super.cleanup(context);    //To change body of overridden methods use File | Settings | File Templates.
+        super.cleanup(context);
     }
 
     protected abstract WritableComparable getKey();
