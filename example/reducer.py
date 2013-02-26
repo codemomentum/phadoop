@@ -3,5 +3,5 @@ def reduce(key,values,context):
     for value in values:
         count+=1
     _key.set(key)
-    _value.set(count)
+    _value.set(str(count))
     context.write(_key,_value)

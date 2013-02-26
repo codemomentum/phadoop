@@ -20,18 +20,16 @@ You can use different kinds of scripts as mappers or reducers, but you should fo
 ##Wordcount example
 ###Mapper.js
 	function map(key, value, context){
-    	words = value.split(/[\s\.:?!]+/)
+    	words = value.toString().split(' ');
     	for(var i=0; i < words.length; i++) {
         	var word = words[i];
-        	if (word.indexOf('#') == 0)
-        	{
-            	_key.set(word);
-            	_value.set('1');
-            	context.write(_key,_value);
-        	}
-
+        	_key.set(word);
+        	_value.set('1');
+        	context.write(_key,_value);
     	}
 	}
+
+
 
 ###Reducer.py
 	def reduce(key,values,context):
@@ -39,11 +37,24 @@ You can use different kinds of scripts as mappers or reducers, but you should fo
     	for value in values:
         	count+=1
     	_key.set(key)
-    	_value.set(count)
+    	_value.set(str(count))
     	context.write(_key,_value)
 
 ###How to execute
+After building with mvn clean install:
 
+	hadoop  jar phadoop-app/target/phadoop-uber-cli.jar phadoop ./example/mapper.js ./example/reducer.py ./example/input/ ./example/output
+
+and the result should be something similar:
+	
+	hadoop	2
+	hello	1
+	java	1
+	javascript	1
+	js	1
+	python	3
+	…..
+	…..
 
 ##phadoop-core
 contains some basic plumbing to get this working

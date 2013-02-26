@@ -4,6 +4,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -61,7 +62,7 @@ public class PHadoopJob extends Configured implements Tool {
         String reducerExtension=FilenameUtils.getExtension(reducerFileName);
         config.set(Constants.REDUCER_EXTENSION, reducerExtension);
 
-        Job job = new Job(new JobConf());
+        Job job = new Job(config);
 
         job.setMapperClass(MRRegistry.getRegisteredMapper(mapperExtension));
         job.setReducerClass(MRRegistry.getRegisteredReducer(reducerExtension));
@@ -74,6 +75,8 @@ public class PHadoopJob extends Configured implements Tool {
 
         job.setJarByClass(PHadoopJob.class);
 
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Text.class);
 
         job.waitForCompletion(true);
     }
