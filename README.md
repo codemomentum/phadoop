@@ -10,10 +10,12 @@ pHadoop is right now a playground for bringing some jvm scripting ( <a
 
 You can use different kinds of scripts as mappers or reducers, but you should follow the naming convention  
 
-<li>Extensions should be proper such as: mapper.js, reducer.py (The scripting engine takes the extensions into account)
-<li>Function names should be **map** for mapper and **reduce** for reducer
-<li>Inside the scripts, the variables start with underscore such as **_key**, **_value** are reserved
-<li>Only Text is supported for now
+<ul>
+    <li>Extensions should be proper such as: mapper.js, reducer.py (The scripting engine takes the extensions into account)</li>
+    <li>Function names should be **map** for mapper and **reduce** for reducer</li>
+    <li>Inside the scripts, the variables start with underscore such as **_key**, **_value** are reserved </li>
+    <li>Only Text is supported for now</li>
+</ul>
 
 
 #QuickStart
