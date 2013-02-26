@@ -25,7 +25,11 @@ public class ScriptReader {
     }
 
     private String readStringFromFile(String fileName) throws IOException {
-        return FileUtils.readFileToString(new File(fileName));
+        String body = FileUtils.readFileToString(new File(fileName));
+        if (null == body) {
+            throw new RuntimeException("Could not read script file from given path: " + fileName);
+        }
+        return body;
     }
 
     private String readStringFromDFS(String fileName) throws IOException {

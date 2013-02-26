@@ -36,6 +36,9 @@ public abstract class BaseReducer extends Reducer<WritableComparable, Writable,
         //get utils String and extension
         //instantiate the utils engine manager
         scriptEngine = scriptEngineManager.getEngineByExtension(context.getConfiguration().get(REDUCER_EXTENSION));
+        if(null==scriptEngine) {
+            scriptEngine=getScriptEngine();
+        }
         //eval
         try {
             scriptEngine.eval(context.getConfiguration().get(REDUCER_SCRIPT));
@@ -65,5 +68,6 @@ public abstract class BaseReducer extends Reducer<WritableComparable, Writable,
 
     protected abstract Writable getValue();
 
+    protected abstract ScriptEngine getScriptEngine();
 
 }

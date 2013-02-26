@@ -1,5 +1,6 @@
 package org.codemomentum.phadoop.js;
 
+import com.sun.script.javascript.RhinoScriptEngineFactory;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
@@ -7,6 +8,8 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.codemomentum.phadoop.core.BaseReducer;
 import sun.org.mozilla.javascript.internal.NativeArray;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import java.io.IOException;
 
 /**
@@ -28,11 +31,9 @@ public class JSReducer extends BaseReducer {
     }
 
     @Override
-    public void reduce(WritableComparable key, Iterable<Writable> values, Context context) throws IOException, InterruptedException {
-        //NativeArray nativeArray=new NativeArray()
-        //this would be very sad
-
-
-        super.reduce(key, values, context);
+    protected ScriptEngine getScriptEngine() {
+        ScriptEngineFactory factory=new RhinoScriptEngineFactory();
+        return factory.getScriptEngine();
     }
+
 }

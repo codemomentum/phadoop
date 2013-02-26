@@ -1,4 +1,4 @@
-package org.codemomentum.phadoop.core;
+package org.codemomentum.phadoop.app;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -13,58 +13,58 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.codemomentum.phadoop.core.io.ScriptReader;
+import org.codemomentum.phadoop.core.utils.Constants;
 import org.codemomentum.phadoop.core.utils.MRRegistry;
 
-import static org.codemomentum.phadoop.core.utils.Constants.*;
 
 /**
  * @author Halit
  */
-public class GenericJob extends Configured implements Tool {
+public class PHadoopJob extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new GenericJob(), args);
+        int res = ToolRunner.run(new Configuration(), new PHadoopJob(), args);
         System.exit(res);
     }
 
     @Override
     public int run(String[] args) throws Exception {
         if (args.length != 4) {
-            String usage = "generic-job <mapperFileName> <reducerFileName> <inDir> <outDir>";
+            String usage = "phadoop <mapperFileName> <reducerFileName> <inDir> <outDir>";
             System.out.println(usage);
             ToolRunner.printGenericCommandUsage(System.out);
             System.exit(1);
         }
 
-        GenericJob genericJob = new GenericJob();
+        PHadoopJob pHadoopJob = new PHadoopJob();
         String mapperFileName = args[0];
         String reducerFileName = args[1];
         String inDir = args[2];
         String outDir = args[3];
-        genericJob.startJob(mapperFileName, reducerFileName, inDir, outDir);
+        pHadoopJob.startJob(mapperFileName, reducerFileName, inDir, outDir);
         return 0;
     }
 
     private void startJob(String mapperFileName, String reducerFileName, String inDir, String outDir) throws Exception{
-        Configuration config = getConf();
+        Configuration config = new Configuration();
         ScriptReader scriptReader=new ScriptReader();
 
         //beware of the naming convention
         String mapperScriptAsString = scriptReader.readString(mapperFileName);
-        config.set(MAPPER_SCRIPT, mapperScriptAsString);
+        config.set(Constants.MAPPER_SCRIPT, mapperScriptAsString);
         String mapperExtension= FilenameUtils.getExtension(mapperFileName);
-        config.set(MAPPER_EXTENSION, mapperExtension);
+        config.set(Constants.MAPPER_EXTENSION, mapperExtension);
 
 
         String reducerScriptAsString = scriptReader.readString(reducerFileName);
-        config.set(REDUCER_SCRIPT, reducerScriptAsString);
+        config.set(Constants.REDUCER_SCRIPT, reducerScriptAsString);
         String reducerExtension=FilenameUtils.getExtension(reducerFileName);
-        config.set(REDUCER_EXTENSION, reducerExtension);
+        config.set(Constants.REDUCER_EXTENSION, reducerExtension);
 
         Job job = new Job(new JobConf());
 
-        job.setMapperClass(MRRegistry.getRegisteredMapper(MAPPER));
-        job.setReducerClass(MRRegistry.getRegisteredReducer(REDUCER));
+        job.setMapperClass(MRRegistry.getRegisteredMapper(mapperExtension));
+        job.setReducerClass(MRRegistry.getRegisteredReducer(reducerExtension));
 
         FileInputFormat.addInputPath(job,new Path(inDir));
         job.setInputFormatClass(TextInputFormat.class);
@@ -72,7 +72,7 @@ public class GenericJob extends Configured implements Tool {
         FileOutputFormat.setOutputPath(job,new Path(outDir));
         job.setOutputFormatClass(TextOutputFormat.class);
 
-        job.setJarByClass(GenericJob.class);
+        job.setJarByClass(PHadoopJob.class);
 
 
         job.waitForCompletion(true);

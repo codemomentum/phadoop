@@ -1,0 +1,6 @@
+hello
+hadoop
+python java
+js javascript
+hadoop  python python
+etc..

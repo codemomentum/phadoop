@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.IOException;
@@ -34,10 +35,13 @@ public abstract class BaseMapper extends Mapper<WritableComparable, Writable,
         scriptEngineManager = new ScriptEngineManager();
         //get utils String and extension
         //instantiate the utils engine manager
-        scriptEngine = scriptEngineManager.getEngineByExtension(context.getConfiguration().get(REDUCER_EXTENSION));
+        scriptEngine = scriptEngineManager.getEngineByExtension(context.getConfiguration().get(MAPPER_EXTENSION));
+        if(null==scriptEngine) {
+            scriptEngine=getScriptEngine();
+        }
         //eval
         try {
-            scriptEngine.eval(context.getConfiguration().get(REDUCER_SCRIPT));
+            scriptEngine.eval(context.getConfiguration().get(MAPPER_SCRIPT));
             scriptEngine.put("_key",getKey());
             scriptEngine.put("_value",getValue());
         } catch (ScriptException e) {
@@ -61,4 +65,6 @@ public abstract class BaseMapper extends Mapper<WritableComparable, Writable,
     protected abstract WritableComparable getKey();
 
     protected abstract Writable getValue();
+
+    protected abstract ScriptEngine getScriptEngine();
 }
