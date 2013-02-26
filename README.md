@@ -5,7 +5,7 @@
 ##PHadoop (Polyglot Hadoop)
 
 pHadoop is right now a playground for bringing some jvm scripting ( <a
-        href="http://java.sun.com/developer/technicalArticles/J2SE/Desktop/scripting/">JSR 223</a> ) to hadoop jobs.
+        href="http://docs.oracle.com/javase/6/docs/technotes/guides/scripting/index.html">JSR 223</a> ) to hadoop jobs.
 
 
 You can use different scripts as mappers or reducers, but you should follow the naming convention and put their extension properly. Example: mapper.js, reducer.py
