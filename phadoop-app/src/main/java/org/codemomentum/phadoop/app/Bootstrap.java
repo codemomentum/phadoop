@@ -1,6 +1,7 @@
 package org.codemomentum.phadoop.app;
 
 import org.apache.hadoop.util.ProgramDriver;
+import org.codemomentum.phadoop.core.utils.Constants;
 import org.codemomentum.phadoop.core.utils.MRRegistry;
 import org.codemomentum.phadoop.js.JSMapper;
 import org.codemomentum.phadoop.js.JSReducer;
@@ -13,11 +14,11 @@ import org.codemomentum.phadoop.python.PythonReducer;
 public class Bootstrap {
 
     static {
-        MRRegistry.registerMapper("js", JSMapper.class);
-        MRRegistry.registerMapper("py", PythonMapper.class);
+        MRRegistry.registerMapper(Constants.JS_EXT, JSMapper.class);
+        MRRegistry.registerMapper(Constants.PYTHON_EXT, PythonMapper.class);
 
-        MRRegistry.registerReducer("js", JSReducer.class);
-        MRRegistry.registerReducer("py", PythonReducer.class);
+        MRRegistry.registerReducer(Constants.JS_EXT, JSReducer.class);
+        MRRegistry.registerReducer(Constants.PYTHON_EXT, PythonReducer.class);
     }
 
     public static void main(String[] args) throws Throwable {

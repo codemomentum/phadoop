@@ -6,7 +6,9 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -16,6 +18,8 @@ import org.apache.hadoop.util.ToolRunner;
 import org.codemomentum.phadoop.core.io.ScriptReader;
 import org.codemomentum.phadoop.core.utils.Constants;
 import org.codemomentum.phadoop.core.utils.MRRegistry;
+
+import javax.script.ScriptEngine;
 
 
 /**
@@ -46,37 +50,61 @@ public class PHadoopJob extends Configured implements Tool {
         return 0;
     }
 
-    private void startJob(String mapperFileName, String reducerFileName, String inDir, String outDir) throws Exception{
+    private void startJob(String mapperFileName, String reducerFileName, String inDir, String outDir) throws Exception {
         Configuration config = new Configuration();
-        ScriptReader scriptReader=new ScriptReader();
+        ScriptReader scriptReader = new ScriptReader();
 
         //beware of the naming convention
         String mapperScriptAsString = scriptReader.readString(mapperFileName);
         config.set(Constants.MAPPER_SCRIPT, mapperScriptAsString);
-        String mapperExtension= FilenameUtils.getExtension(mapperFileName);
+        String mapperExtension = FilenameUtils.getExtension(mapperFileName);
         config.set(Constants.MAPPER_EXTENSION, mapperExtension);
 
 
         String reducerScriptAsString = scriptReader.readString(reducerFileName);
         config.set(Constants.REDUCER_SCRIPT, reducerScriptAsString);
-        String reducerExtension=FilenameUtils.getExtension(reducerFileName);
+        String reducerExtension = FilenameUtils.getExtension(reducerFileName);
         config.set(Constants.REDUCER_EXTENSION, reducerExtension);
 
         Job job = new Job(config);
+        job.setJarByClass(PHadoopJob.class);
+        job.setJobName(String.format("PHadoopJob MAP: %s, RED: %s, IN: %s, OUT: %s", mapperFileName, reducerFileName, inDir, outDir));
 
         job.setMapperClass(MRRegistry.getRegisteredMapper(mapperExtension));
         job.setReducerClass(MRRegistry.getRegisteredReducer(reducerExtension));
 
-        FileInputFormat.addInputPath(job,new Path(inDir));
-        job.setInputFormatClass(TextInputFormat.class);
 
-        FileOutputFormat.setOutputPath(job,new Path(outDir));
-        job.setOutputFormatClass(TextOutputFormat.class);
+        FileInputFormat.addInputPath(job, new Path(inDir));
+        FileOutputFormat.setOutputPath(job, new Path(outDir));
 
-        job.setJarByClass(PHadoopJob.class);
 
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(Text.class);
+        ScriptEngine seMapper = ScriptEngineFactoryInitializer.getScriptEngineInstanceByExtension(mapperExtension);
+        seMapper.eval(mapperScriptAsString);
+
+
+        //now we need the Script engine to evaluate InputFormatClass and OutputFormatClass
+        Object ifClassName = seMapper.get(Constants.INPUT_FORMAT);
+        if (null != ifClassName) {
+            job.setInputFormatClass((Class<? extends InputFormat>) Class.forName(ifClassName.toString()));
+        } else {
+            job.setInputFormatClass(TextInputFormat.class);
+        }
+
+        Object ofClassName = seMapper.get(Constants.OUTPUT_FORMAT);
+        if (null != ifClassName) {
+            job.setOutputFormatClass((Class<? extends OutputFormat>) Class.forName(ofClassName.toString()));
+        } else {
+            job.setOutputFormatClass(TextOutputFormat.class);
+        }
+
+
+        //now we need the Script engine to evaluate MapOutputKeyClass and MapOutputValueClass
+        Object mapperOutputKey = seMapper.get(Constants.MAPPER_OUTPUT_KEY);
+        job.setMapOutputKeyClass(null == mapperOutputKey ? Text.class : mapperOutputKey.getClass());
+
+        Object mapperOutputValue = seMapper.get(Constants.MAPPER_OUTPUT_VALUE);
+        job.setMapOutputValueClass(null == mapperOutputValue ? Text.class : mapperOutputValue.getClass());
+
 
         job.waitForCompletion(true);
     }
