@@ -1,3 +1,8 @@
+from org.apache.hadoop.io import Text
+
+_rkey = Text()
+_rvalue = Text()
+
 def reduce(key,values,context):
     count = 0
     for value in values:

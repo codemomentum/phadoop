@@ -4,6 +4,7 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.codemomentum.phadoop.core.utils.Constants;
 import org.codemomentum.phadoop.core.utils.ScriptEngineHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,10 +65,30 @@ public abstract class BaseReducer extends Reducer<WritableComparable, Writable,
         super.cleanup(context);
     }
 
-    protected abstract WritableComparable getKey();
+    protected WritableComparable getKey() {
+        Object keyFromScript = getScriptEngine().get(Constants.REDUCER_OUTPUT_KEY);
+        if (keyFromScript instanceof WritableComparable) {
+            return (WritableComparable) keyFromScript;
+        } else {
+            logger.error("The key from script is not an instance of WritableComparable: {}", keyFromScript);
+            throw new RuntimeException("The key from script is not an instance of WritableComparable");
+        }
+    }
 
-    protected abstract Writable getValue();
+    protected Writable getValue() {
+        Object valueFromString = getScriptEngine().get(Constants.REDUCER_OUTPUT_VALUE);
+        if (valueFromString instanceof Writable) {
+            return (Writable) valueFromString;
+        } else {
+            logger.error("The value from script is not an instance of Writable: {}", valueFromString);
+            throw new RuntimeException("The value from script is not an instance of Writable");
+        }
+    }
 
-    protected abstract ScriptEngine getScriptEngine();
+    protected abstract ScriptEngine getNewScriptEngine();
+
+    public ScriptEngine getScriptEngine() {
+        return scriptEngine;
+    }
 
 }
