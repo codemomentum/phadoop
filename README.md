@@ -1,7 +1,3 @@
-### (Work in progress)
-<br>
-<br>
-
 #PHadoop (Polyglot Hadoop)
 
 pHadoop is right now a playground for bringing some jvm scripting ( <a
@@ -12,9 +8,8 @@ You can use different kinds of scripts as mappers or reducers, but you should fo
 
 <ul>
     <li>Extensions should be proper such as: mapper.js, reducer.py (The scripting engine takes the extensions into account)</li>
-    <li>Function names should be **map** for mapper and **reduce** for reducer</li>
-    <li>Inside the scripts, the variables start with underscore such as **_key**, **_value** are reserved </li>
-    <li>Only Text Input and Output formats are supported for now</li>
+    <li>Function names should be 'map' for mapper and 'reduce' for reducer</li>
+    <li>Inside the scripts, the variables start with underscore such as _key,_value are reserved </li>
 </ul>
 
 ###Differences from HadoopStreaming
@@ -33,7 +28,6 @@ mkey and mvalue instances are extracted from the script at the startup of map or
 This is just for performance improvement, you can instantiate new Writable's but reusing is encouraged.
 
 **mkey** and **mvalue** are optional, default type is org.apache.hadoop.io.Text if omitted.
-
 
 
 
@@ -109,8 +103,6 @@ contains some primitive code to use JavaScript code as Hadoop Map Reduce functio
 
 
 
-
-
 ##phadoop-python
 contains some primitive code to use Python code as Hadoop Map Reduce functions
 
@@ -130,7 +122,13 @@ contains some primitive code to use Python code as Hadoop Map Reduce functions
         	_value.set(value)
         	context.write(_key,_value)
 
+##Support for Custom Input & Output Formats
 
+In the mapper script, you need to assign the fully qualified class names as follows:
+
+	_if="org.apache.hadoop.mapreduce.lib.input.TextInputFormat";
+	_of="org.apache.hadoop.mapreduce.lib.output.TextOutputFormat";
+	
 
 Copyright and License
 ---------------------
