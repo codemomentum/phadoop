@@ -14,13 +14,30 @@ You can use different kinds of scripts as mappers or reducers, but you should fo
     <li>Extensions should be proper such as: mapper.js, reducer.py (The scripting engine takes the extensions into account)</li>
     <li>Function names should be **map** for mapper and **reduce** for reducer</li>
     <li>Inside the scripts, the variables start with underscore such as **_key**, **_value** are reserved </li>
-    <li>Only Text is supported for now</li>
+    <li>Only Text Input and Output formats are supported for now</li>
 </ul>
+
+###Differences from HadoopStreaming
+<ul>
+    <li>The script being executed is inside the JVM</li>
+    <li>You get full control over the Hadoop serialized key and value types.</li>
+    <li>Context is exposed to the scripts, you can easily report progress or such</li>
+    <li>Probably slower but no performance metrics yet</li>
+</ul>
+
+
+###Reserved Variables
+**_mkey** stands for "mapper output key" and  **_mvalue** stands for **mapper output value**. <br>
+mkey and mvalue instances are extracted from the script at the startup of map or reduce phase and then reused as the **_key** **_value** wrappers. This is just for performance improvement, you can instantiate new Writable's but reusing is encouraged.
+
 
 
 #QuickStart
 ##Wordcount example
 ###Mapper.js
+	_mkey = new org.apache.hadoop.io.Text();
+	_mvalue = new org.apache.hadoop.io.Text();
+
 	function map(key, value, context){
     	words = value.toString().split(' ');
     	for(var i=0; i < words.length; i++) {
@@ -32,8 +49,11 @@ You can use different kinds of scripts as mappers or reducers, but you should fo
 	}
 
 
-
 ###Reducer.py
+	from org.apache.hadoop.io import Text
+	_rkey = Text()
+	_rvalue = Text()
+	
 	def reduce(key,values,context):
     	count = 0
     	for value in values:
@@ -110,7 +130,7 @@ contains some primitive code to use Python code as Hadoop Map Reduce functions
 Copyright and License
 ---------------------
 
-Copyright 2013 Codemomentum.com
+Copyright 2013 Codemomentum.org
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in
 compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:
