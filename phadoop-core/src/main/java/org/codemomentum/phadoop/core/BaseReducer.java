@@ -1,5 +1,6 @@
 package org.codemomentum.phadoop.core;
 
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -67,6 +68,9 @@ public abstract class BaseReducer extends Reducer<WritableComparable, Writable,
 
     protected WritableComparable getKey() {
         Object keyFromScript = getScriptEngine().get(Constants.REDUCER_OUTPUT_KEY);
+        if(null==keyFromScript) {
+            return new Text();
+        }
         if (keyFromScript instanceof WritableComparable) {
             return (WritableComparable) keyFromScript;
         } else {
@@ -77,6 +81,9 @@ public abstract class BaseReducer extends Reducer<WritableComparable, Writable,
 
     protected Writable getValue() {
         Object valueFromString = getScriptEngine().get(Constants.REDUCER_OUTPUT_VALUE);
+        if(null==valueFromString) {
+            return new Text();
+        }
         if (valueFromString instanceof Writable) {
             return (Writable) valueFromString;
         } else {

@@ -28,7 +28,12 @@ You can use different kinds of scripts as mappers or reducers, but you should fo
 
 ###Reserved Variables
 **_mkey** stands for "mapper output key" and  **_mvalue** stands for **mapper output value**. <br>
-mkey and mvalue instances are extracted from the script at the startup of map or reduce phase and then reused as the **_key** **_value** wrappers. This is just for performance improvement, you can instantiate new Writable's but reusing is encouraged.
+mkey and mvalue instances are extracted from the script at the startup of map or reduce phase and then reused as the **_key** **_value** wrappers. 
+
+This is just for performance improvement, you can instantiate new Writable's but reusing is encouraged.
+
+**mkey** and **mvalue** are optional, default type is org.apache.hadoop.io.Text if omitted.
+
 
 
 
