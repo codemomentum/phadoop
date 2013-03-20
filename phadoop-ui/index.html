@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset=utf-8>
+		<title>Polyglot Hadoop</title>
+		
+		<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+		<!-- Bootstrap -->
+		<link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="css/bootstrap/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+		<link href="css/codemirror/codemirror.css" rel="stylesheet" />
+		<link href="css/codemirror/solarized.css" rel="stylesheet" />
+		<style type="text/css">
+		body {
+			padding-top: 20px;
+			padding-bottom: 40px;
+		}
+		/* Custom container */
+		.container-narrow {
+			margin: 0 auto;
+			max-width: 1200px;
+		}
+		.container-narrow > hr {
+			margin: 30px 0;
+		}
+		.input-prepend {
+			margin-top: 14px;
+		}
+		.CodeMirror {
+			border: 1px solid lightgray;
+			margin-left: 60px;
+		}
+		.CodeMirror ~ .CodeMirror {
+			margin-left: 30px;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="container-narrow">
+
+			<div class="masthead">
+				<ul class="nav nav-pills pull-right">
+					<li class="active"><a href="#">Home</a></li>
+				</ul>
+				<h3 class="muted">Polyglot Hadoop</h3>
+			</div>
+			<hr>
+			<h4>Job I/O</h4>
+			<div class="row">
+				<div class="input-prepend span6">
+					<span class="add-on">Input</span>
+					<input class="span5" id="inputPath" type="text" placeholder="Input path">
+				</div>
+				<div class="input-prepend span6">
+					<span class="add-on">Output</span>
+					<input class="span5" id="outputPath" type="text" placeholder="Output path">
+				</div>
+			</div>
+			<h4>M/R Code
+			<div class="btn-group">
+				<button class="btn active modeChanger" id="jsModeBtn">JavaScript</button>
+				<button class="btn modeChanger" id="pyModeBtn">Python</button>
+			</div></h4>
+			<div class="row">
+				<h5 class="span6">Mapper</h5>
+				<h5 class="span6">Reducer</h5>
+			<div class="row">
+				<textarea id="mapperCode" name="mapperCode"></textarea>
+				<textarea id="reducerCode" name="reducerCode"></textarea>
+			</div>
+			<hr>
+			<button class="btn btn-large btn-success pull-right" type="button" id="submitBtn">Submit !</button>
+
+		</div>
+
+		<script src="js/jquery-1.9.1.min.js"></script>
+		<script src="js/bootstrap/bootstrap.min.js"></script>
+		<script src="js/codemirror/codemirror.js"></script>
+		<script src="js/codemirror/addon/edit/matchbrackets.js"></script>
+		<script src="js/codemirror/addon/edit/continuecomment.js"></script>
+		<script src="js/codemirror/mode/javascript.js"></script>
+		<script src="js/codemirror/mode/python.js"></script>
+		<script src="js/index.js"></script>
+	</body>
+</html>
