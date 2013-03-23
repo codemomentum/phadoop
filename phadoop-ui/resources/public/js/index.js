@@ -1,6 +1,11 @@
 $(function(){
 	var MODE = "javascript";
 
+	Messenger.options = {
+		extraClasses: 'messenger-fixed messenger-on-bottom',
+		theme: 'future'
+	};
+
 	// activate codemirror
 	var mapperEditor = CodeMirror.fromTextArea(document.getElementById("mapperCode"), {
 		theme:				"solarized light",
@@ -25,6 +30,32 @@ $(function(){
 		reducerEditor.setOption("mode", MODE);
 	}
 
+	function validateForm() {
+		var errorMsg = "";
+
+		if(!$.trim($("#inputPath").val()).length) {
+			errorMsg += "Input path cannot be empty! ";
+		}
+		if(!$.trim($("#outputPath").val()).length) {
+			errorMsg += "Output path cannot be empty! ";
+		}
+		if(!$.trim(mapperEditor.getValue()).length) {
+			errorMsg += "Mapper code cannot be empty! ";
+		}
+		if(!$.trim(reducerEditor.getValue()).length) {
+			errorMsg += "Reducer code cannot be empty! ";
+		}
+
+		if(errorMsg) {
+			Messenger().post({
+				message: errorMsg,
+				type: "error",
+				showCloseButton: true,
+				hideAfter: 10
+			});
+		}
+	}
+
 	// bind event handlers
 	$("#jsModeBtn").click(function(){
 		changeMode("javascript");
@@ -39,6 +70,6 @@ $(function(){
 	});
 
 	$("#submitBtn").click(function(){
-		// TODO
+		validateForm();
 	});
 });
