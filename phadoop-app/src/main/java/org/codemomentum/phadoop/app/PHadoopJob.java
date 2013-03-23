@@ -18,6 +18,10 @@ import org.apache.hadoop.util.ToolRunner;
 import org.codemomentum.phadoop.core.io.ScriptReader;
 import org.codemomentum.phadoop.core.utils.Constants;
 import org.codemomentum.phadoop.core.utils.MRRegistry;
+import org.codemomentum.phadoop.js.JSMapper;
+import org.codemomentum.phadoop.js.JSReducer;
+import org.codemomentum.phadoop.python.PythonMapper;
+import org.codemomentum.phadoop.python.PythonReducer;
 
 import javax.script.ScriptEngine;
 
@@ -112,6 +116,13 @@ public class PHadoopJob extends Configured implements Tool {
     public String startOnCluster(String mapperScriptAsString, String mapperExtension,
                                   String reducerScriptAsString, String reducerExtension,
                                   String inDir, String outDir) throws Exception {
+        MRRegistry.registerMapper(Constants.JS_EXT, JSMapper.class);
+        MRRegistry.registerMapper(Constants.PYTHON_EXT, PythonMapper.class);
+
+        MRRegistry.registerReducer(Constants.JS_EXT, JSReducer.class);
+        MRRegistry.registerReducer(Constants.PYTHON_EXT, PythonReducer.class);
+
+
         Configuration config = new Configuration();
         ScriptReader scriptReader = new ScriptReader();
 
