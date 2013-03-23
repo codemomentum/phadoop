@@ -13,5 +13,6 @@
 
 (defroutes phadoop-routes
   (GET "/jobs" request (json-response (elem/list)))
-  (POST "/job" request (elem/put (common/uuid) {"body" (slurp (request :body))}))
+  (POST "/job" request (elem/put (common/uuid) {"body" (json/parse-string (slurp (request :body)))
+                                                }))
 )

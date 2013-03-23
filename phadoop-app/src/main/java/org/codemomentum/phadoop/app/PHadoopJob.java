@@ -108,4 +108,64 @@ public class PHadoopJob extends Configured implements Tool {
 
         job.waitForCompletion(true);
     }
+
+    public String startOnCluster(String mapperScriptAsString, String mapperExtension,
+                                  String reducerScriptAsString, String reducerExtension,
+                                  String inDir, String outDir) throws Exception {
+        Configuration config = new Configuration();
+        ScriptReader scriptReader = new ScriptReader();
+
+        //beware of the naming convention
+        config.set(Constants.MAPPER_SCRIPT, mapperScriptAsString);
+        config.set(Constants.MAPPER_EXTENSION, mapperExtension);
+
+
+        config.set(Constants.REDUCER_SCRIPT, reducerScriptAsString);
+        config.set(Constants.REDUCER_EXTENSION, reducerExtension);
+
+        Job job = new Job(config);
+        job.setJarByClass(PHadoopJob.class);
+        job.setJobName(String.format("PHadoopJob MAP: %s, RED: %s, IN: %s, OUT: %s", mapperExtension, reducerExtension, inDir, outDir));
+
+        job.setMapperClass(MRRegistry.getRegisteredMapper(mapperExtension));
+        job.setReducerClass(MRRegistry.getRegisteredReducer(reducerExtension));
+
+
+        FileInputFormat.addInputPath(job, new Path(inDir));
+        FileOutputFormat.setOutputPath(job, new Path(outDir));
+
+
+        ScriptEngine seMapper = ScriptEngineFactoryInitializer.getScriptEngineInstanceByExtension(mapperExtension);
+        seMapper.eval(mapperScriptAsString);
+
+
+        //now we need the Script engine to evaluate InputFormatClass and OutputFormatClass
+        Object ifClassName = seMapper.get(Constants.INPUT_FORMAT);
+        if (null != ifClassName) {
+            job.setInputFormatClass((Class<? extends InputFormat>) Class.forName(ifClassName.toString()));
+        } else {
+            job.setInputFormatClass(TextInputFormat.class);
+        }
+
+        Object ofClassName = seMapper.get(Constants.OUTPUT_FORMAT);
+        if (null != ifClassName) {
+            job.setOutputFormatClass((Class<? extends OutputFormat>) Class.forName(ofClassName.toString()));
+        } else {
+            job.setOutputFormatClass(TextOutputFormat.class);
+        }
+
+
+        //now we need the Script engine to evaluate MapOutputKeyClass and MapOutputValueClass
+        Object mapperOutputKey = seMapper.get(Constants.MAPPER_OUTPUT_KEY);
+        job.setMapOutputKeyClass(null == mapperOutputKey ? Text.class : mapperOutputKey.getClass());
+
+        Object mapperOutputValue = seMapper.get(Constants.MAPPER_OUTPUT_VALUE);
+        job.setMapOutputValueClass(null == mapperOutputValue ? Text.class : mapperOutputValue.getClass());
+
+
+        job.submit();
+
+        return job.getTrackingURL();
+    }
 }
+
