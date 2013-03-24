@@ -51,7 +51,8 @@ $(function(){
 				message: errorMsg,
 				type: "error",
 				showCloseButton: true,
-				hideAfter: 10
+				hideAfter: 10,
+				id: "validation-error"
 			});
 		}
 	}
