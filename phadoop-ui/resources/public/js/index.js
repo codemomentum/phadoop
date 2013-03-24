@@ -55,6 +55,8 @@ $(function(){
 				id: "validation-error"
 			});
 		}
+
+		return !errorMsg;
 	}
 
 	// bind event handlers
@@ -71,6 +73,31 @@ $(function(){
 	});
 
 	$("#submitBtn").click(function(){
-		validateForm();
+		if(validateForm()) {
+			$.post("/job", {
+				input_path: $.trim($("#inputPath").val()),
+				output_path: $.trim($("#outputPath").val()),
+				mapper_code: $.trim(mapperEditor.getValue()),
+				reducer_code: $.trim(reducerEditor.getValue()),
+				mapper_extension: MODE == "javascript" ? "js" : "py",
+				reducer_extension: MODE == "javascript" ? "js" : "py"
+			}).done(function(data) {
+				Messenger().post({
+					message: "Map-Reduce job submitted with id '" + "_id" + "'.",
+					type: "success",
+					showCloseButton: true,
+					hideAfter: 10,
+					id: "submit-result"
+				});
+			}).fail(function(){
+				Messenger().post({
+					message: "Could not submit map-reduce job.",
+					type: "error",
+					showCloseButton: true,
+					hideAfter: 10,
+					id: "submit-result"
+				});
+			});
+		}
 	});
 });
