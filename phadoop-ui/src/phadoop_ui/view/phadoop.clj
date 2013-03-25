@@ -20,25 +20,15 @@
 
 (defroutes phadoop-routes
   (GET "/jobs" request (json-response (elem/list)))
-  (POST "/job" request (let [dsl (json/parse-string (slurp (request :body )))
-                             ]
-                         (elem/put (common/uuid) {"dsl" dsl})
-                         (print dsl)
-                         (json-response ({"tracking-url"
-                                          (trigger-on-cluster "function map(key, value, context){
-    _key.set(key);
-    _value.set(value);
-    context.write(_key,_value);
-}" "js"
-
-                                            "function reduce(key, values, context){
-    var iterator=values.iterator();
-    while (iterator.hasNext()) {
-        _key.set(key);
-        _value.set(iterator.next());
-        context.write(_key,_value);
-    }
-}" "js"
-                                            "hdfs://localhost:9000/input" "hdfs://localhost:9000/output")}))
+  (POST "/job" {params :params} (
+                         (elem/put (common/uuid) params)
+                         (json-response ({"tracking-url" (trigger-on-cluster 
+                            (params :mapper_code)
+                            (params :mapper_extension)
+                            (params :reducer_code)
+                            (params :reducer_extension)
+                            (params :input_path)
+                            (params :output_path)
+                            )}))
                          ))
   )
