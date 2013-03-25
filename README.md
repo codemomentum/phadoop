@@ -131,14 +131,15 @@ In the mapper script, you need to assign the fully qualified class names as foll
 
 
 #Web UI
-We have a simple webapp with some editing capabilities thanks to @kramer
+We have a simple webapp with some editing capabilities thanks to @kramer.
+
 After building with mvn clean install:
+
         cd phadoop-ui
         lein run
 
 Here is what it looks like:
-
-
+<img src="https://raw.github.com/codemomentum/phadoop/master/docs/phadoop.png">
 
 Copyright and License
 ---------------------
