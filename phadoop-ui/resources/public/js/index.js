@@ -1,6 +1,11 @@
 $(function(){
 	var MODE = "javascript";
 
+	Messenger.options = {
+		extraClasses: 'messenger-fixed messenger-on-bottom',
+		theme: 'future'
+	};
+
 	// activate codemirror
 	var mapperEditor = CodeMirror.fromTextArea(document.getElementById("mapperCode"), {
 		theme:				"solarized light",
@@ -25,6 +30,35 @@ $(function(){
 		reducerEditor.setOption("mode", MODE);
 	}
 
+	function validateForm() {
+		var errorMsg = "";
+
+		if(!$.trim($("#inputPath").val()).length) {
+			errorMsg += "Input path cannot be empty! ";
+		}
+		if(!$.trim($("#outputPath").val()).length) {
+			errorMsg += "Output path cannot be empty! ";
+		}
+		if(!$.trim(mapperEditor.getValue()).length) {
+			errorMsg += "Mapper code cannot be empty! ";
+		}
+		if(!$.trim(reducerEditor.getValue()).length) {
+			errorMsg += "Reducer code cannot be empty! ";
+		}
+
+		if(errorMsg) {
+			Messenger().post({
+				message: errorMsg,
+				type: "error",
+				showCloseButton: true,
+				hideAfter: 10,
+				id: "validation-error"
+			});
+		}
+
+		return !errorMsg;
+	}
+
 	// bind event handlers
 	$("#jsModeBtn").click(function(){
 		changeMode("javascript");
@@ -39,6 +73,31 @@ $(function(){
 	});
 
 	$("#submitBtn").click(function(){
-		// TODO
+		if(validateForm()) {
+			$.post("/job", {
+				input_path: $.trim($("#inputPath").val()),
+				output_path: $.trim($("#outputPath").val()),
+				mapper_code: $.trim(mapperEditor.getValue()),
+				reducer_code: $.trim(reducerEditor.getValue()),
+				mapper_extension: MODE == "javascript" ? "js" : "py",
+				reducer_extension: MODE == "javascript" ? "js" : "py"
+			}).done(function(data) {
+				Messenger().post({
+					message: "Map-Reduce job submitted with id '" + "_id" + "'.",
+					type: "success",
+					showCloseButton: true,
+					hideAfter: 10,
+					id: "submit-result"
+				});
+			}).fail(function(){
+				Messenger().post({
+					message: "Could not submit map-reduce job.",
+					type: "error",
+					showCloseButton: true,
+					hideAfter: 10,
+					id: "submit-result"
+				});
+			});
+		}
 	});
 });
