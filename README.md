@@ -128,7 +128,17 @@ In the mapper script, you need to assign the fully qualified class names as foll
 
 	_if="org.apache.hadoop.mapreduce.lib.input.TextInputFormat";
 	_of="org.apache.hadoop.mapreduce.lib.output.TextOutputFormat";
-	
+
+
+#Web UI
+We have a simple webapp with some editing capabilities thanks to @kramer
+After building with mvn clean install:
+        cd phadoop-ui
+        lein run
+
+Here is what it looks like:
+
+
 
 Copyright and License
 ---------------------
