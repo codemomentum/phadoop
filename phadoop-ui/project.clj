@@ -14,6 +14,7 @@
   :plugins [[lein-ring "0.7.5"]
             [lein-idea "1.0.1"]
             ]
+  :jvm-opts ["-Xmx768M"]
   :ring {:handler phadoop-ui.app/site-handler}
   :war-resources-path "resources/public"
   :main phadoop-ui.server)

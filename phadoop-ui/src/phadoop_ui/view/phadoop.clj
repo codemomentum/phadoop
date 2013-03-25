@@ -24,6 +24,21 @@
                              ]
                          (elem/put (common/uuid) {"dsl" dsl})
                          (print dsl)
-                         (json-response ({"tracking-url" (trigger-on-cluster "map" "py" "reduce" "js" "/input" "/output")}))
+                         (json-response ({"tracking-url"
+                                          (trigger-on-cluster "function map(key, value, context){
+    _key.set(key);
+    _value.set(value);
+    context.write(_key,_value);
+}" "js"
+
+                                            "function reduce(key, values, context){
+    var iterator=values.iterator();
+    while (iterator.hasNext()) {
+        _key.set(key);
+        _value.set(iterator.next());
+        context.write(_key,_value);
+    }
+}" "js"
+                                            "hdfs://localhost:9000/input" "hdfs://localhost:9000/output")}))
                          ))
   )

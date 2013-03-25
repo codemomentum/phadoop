@@ -6,7 +6,7 @@
 (defn- add-port [options port]
   (let [port (if port
                (Integer/parseInt port)
-               8080)]
+               8001)]
     (assoc options :port port)))
 
 (defn- parse-args [[port :as args]]
