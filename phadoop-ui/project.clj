@@ -10,6 +10,8 @@
                  [stencil "0.3.2"]
                  [org.codemomentum/phadoop-app "1.0-SNAPSHOT"]
                  [org.apache.hadoop/hadoop-client "2.0.3-alpha"]
+                 [commons-httpclient/commons-httpclient "3.1"]
+                 ;;reducer fails on single mode?
                  ]
   :plugins [[lein-ring "0.7.5"]
             [lein-idea "1.0.1"]
