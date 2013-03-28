@@ -122,6 +122,10 @@ contains some primitive code to use Python code as Hadoop Map Reduce functions
         	_value.set(value)
         	context.write(_key,_value)
 
+##phadoop-ruby
+
+Ruby support, check tests to see examples
+
 ##Support for Custom Input & Output Formats
 
 In the mapper script, you need to assign the fully qualified class names as follows:

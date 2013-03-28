@@ -21,6 +21,7 @@ public class Constants {
 
     public static final String JS_EXT = "js";
     public static final String PYTHON_EXT = "py";
+    public static final String RUBY_EXT = "rb";
 
     public static final String INPUT_FORMAT = "_if";
     public static final String OUTPUT_FORMAT = "_of";

@@ -38,6 +38,11 @@
             <artifactId>phadoop-python</artifactId>
             <version>${pom.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.codemomentum</groupId>
+            <artifactId>phadoop-ruby</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>phadoop-uber</finalName>
